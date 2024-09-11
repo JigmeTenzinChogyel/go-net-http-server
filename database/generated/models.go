@@ -5,14 +5,25 @@
 package generated
 
 import (
+	"database/sql"
 	"time"
 )
 
+type Todo struct {
+	ID          int32          `json:"id"`
+	UserID      int32          `json:"user_id"`
+	Title       string         `json:"title"`
+	Description sql.NullString `json:"description"`
+	Completed   bool           `json:"completed"`
+	CreatedAt   time.Time      `json:"created_at"`
+	UpdatedAt   time.Time      `json:"updated_at"`
+}
+
 type User struct {
-	ID           int32     `json:"id"`
-	Username     string    `json:"username"`
-	Email        string    `json:"email"`
-	PasswordHash string    `json:"password_hash"`
-	CreatedAt    time.Time `json:"created_at"`
-	UpdatedAt    time.Time `json:"updated_at"`
+	ID        int32     `json:"id"`
+	Username  string    `json:"username"`
+	Email     string    `json:"email"`
+	Password  string    `json:"password"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }

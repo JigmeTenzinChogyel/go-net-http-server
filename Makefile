@@ -76,3 +76,5 @@ migrate-version:
 # Fix sequential ordering of migrations
 migrate-fix:
 	$(GOOSE_CMD) -dir $(MIGRATION_DIR) postgres $(DB_DSN) fix
+
+full-reset: migrate-reset migrate-up generate

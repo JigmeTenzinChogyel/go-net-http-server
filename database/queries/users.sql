@@ -1,5 +1,5 @@
 -- name: CreateUser :one
-INSERT INTO users (username, email, password_hash)
+INSERT INTO users (username, email, password)
 VALUES ($1, $2, $3)
 RETURNING id, username, email, created_at, updated_at;
 
@@ -13,6 +13,17 @@ SELECT id, username, email, created_at, updated_at
 FROM users
 WHERE email = $1;
 
+-- name: GetUserByEmailWithPass :one
+SELECT id, username, email, password, created_at, updated_at
+FROM users
+WHERE email = $1;
+
+-- name: CheckUserExists :one
+SELECT EXISTS (
+    SELECT 1
+    FROM users
+    WHERE email = $1
+);
 
 -- name: UpdateUserEmail :exec
 UPDATE users

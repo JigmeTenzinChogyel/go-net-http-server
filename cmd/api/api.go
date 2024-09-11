@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/JigmeTenzinChogyel/go-net-http-server/database/generated"
+	"github.com/JigmeTenzinChogyel/go-net-http-server/middleware"
 	"github.com/JigmeTenzinChogyel/go-net-http-server/services/user"
 )
 
@@ -34,9 +35,9 @@ func (s *APIServer) Run() error {
 	userHandler := user.NewHandler(queries)
 	userHandler.RegisterRoutes(apiRouter)
 
-	middlewareChain := MiddlewareChain(
-		RequestLoggerMiddleware,
-		RequireAuthMIddleware,
+	middlewareChain := middleware.MiddlewareChain(
+		middleware.RequestLoggerMiddleware,
+		middleware.RequireAuthMiddleware,
 	)
 
 	server := http.Server{
@@ -45,33 +46,4 @@ func (s *APIServer) Run() error {
 	}
 	log.Printf("Server has started on port %s", server.Addr)
 	return server.ListenAndServe()
-}
-
-func RequestLoggerMiddleware(next http.Handler) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("method %s, path: %s", r.Method, r.URL.Path)
-		next.ServeHTTP(w, r)
-	}
-}
-
-func RequireAuthMIddleware(next http.Handler) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		token := r.Header.Get("Authorization")
-		if token != "Bearer token" {
-			http.Error(w, "Unauthorized", http.StatusUnauthorized)
-			return
-		}
-		next.ServeHTTP(w, r)
-	}
-}
-
-type Middleware func(http.Handler) http.HandlerFunc
-
-func MiddlewareChain(middleware ...Middleware) Middleware {
-	return func(next http.Handler) http.HandlerFunc {
-		for i := len(middleware) - 1; i >= 0; i-- {
-			next = middleware[i](next)
-		}
-		return next.ServeHTTP
-	}
 }
