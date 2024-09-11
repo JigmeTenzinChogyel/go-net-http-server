@@ -1,0 +1,4 @@
+.env
+
+# Ignore bin directory
+bin/
